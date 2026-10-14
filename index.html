@@ -788,8 +788,14 @@ select.sel{height:34px;border-radius:999px;border:1px solid var(--line);backgrou
 @keyframes ring{0%{transform:scale(.8);opacity:1}100%{transform:scale(1.35);opacity:0}}
 .fm .tag{position:absolute;right:-8px;top:-8px;background:var(--live);color:var(--paper);font-size:9.5px;font-weight:700;border-radius:999px;padding:0 5px;line-height:15px;border:1.5px solid var(--paper);white-space:nowrap}
 .fm .tag.soon{background:var(--soon)}
-.fm .lb{position:absolute;left:50%;top:37px;transform:translateX(-50%);white-space:nowrap;font-size:11.5px;font-weight:700;color:var(--ink);text-shadow:0 0 3px var(--paper),0 0 3px var(--paper),0 0 3px var(--paper);pointer-events:none;display:none}
+.fm .lb{position:absolute;left:50%;top:36px;transform:translateX(-50%);white-space:nowrap;font-size:11.5px;font-weight:700;color:var(--ink);text-shadow:0 0 3px var(--paper),0 0 3px var(--paper),0 0 3px var(--paper);pointer-events:none;display:none}
 .showlb .fm .lb{display:block}
+.showlb .fm.grp .lb{display:none}
+.showall .fm.grp .lb{display:block}
+/* 타일 사이 흰 줄(이음새) 없애기 */
+.leaflet-container img.leaflet-tile{mix-blend-mode:normal;width:256.6px!important;height:256.6px!important}
+.tilenote{position:absolute;z-index:560;left:50%;bottom:56px;transform:translateX(-50%);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 14px;font-size:12.5px;display:flex;gap:8px;align-items:center;box-shadow:var(--shadow-s);white-space:nowrap;max-width:calc(100% - 20px);overflow:hidden}
+.tilenote .btn{height:28px;font-size:12px}
 .me-dot{position:relative}
 .me-dot i{position:absolute;inset:3px;border-radius:50%;background:var(--me);border:3px solid #fff;box-shadow:0 0 0 2px var(--me),var(--shadow-s)}
 .me-dot[data-m="ip"] i{background:var(--me-ip);box-shadow:0 0 0 2px var(--me-ip)}
@@ -958,6 +964,7 @@ textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:v
       <div class="maphint" id="hint" hidden></div>
       <div class="legend" id="legend"></div>
       <div class="route" id="route" hidden></div>
+      <div class="tilenote" id="tileNote" hidden><span>이 화면에서는 실제 지도가 막혀 있어요</span><a class="btn primary" href="https://sadness500-boop.github.io/Festival/" target="_blank" rel="noopener">정식 앱에서 보기</a></div>
       <div class="sig" aria-label="Produced on October 14, 2026 by Rat Rae Choi">Produced on October 14, 2026 <span>by</span> Rat Rae Choi</div>
     </section>
     <aside class="side" aria-label="축제 목록">
@@ -3522,11 +3529,17 @@ const map = L.map("map", { zoomControl: true, minZoom: 6, maxZoom: 18, maxBounds
 map.attributionControl.setPrefix(false);
 map.attributionControl.addAttribution("경계 © 통계청 · 축제 정보 2026.10.14 조사");
 // 배경지도: OpenStreetMap 타일(실제 도로·지명). 타일이 막힌 곳(예: claude.ai 미리보기)에서는 내장 행정경계 지도로 자동 전환
-const BOX = document.querySelector(".mapbox"); BOX.classList.add("notiles");
-const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자' }).addTo(map);
+const BOX = document.querySelector(".mapbox");
+const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, keepBuffer: 4, updateWhenZooming: false, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자' }).addTo(map);
 let tOk = 0, tErr = 0;
-tiles.on("tileload", () => { tOk++; if (BOX.classList.contains("notiles")) { BOX.classList.remove("notiles"); styleMap(); paintAdmin(); } });
-tiles.on("tileerror", () => { tErr++; if (tErr >= 4 && tOk === 0 && !BOX.classList.contains("notiles")) { BOX.classList.add("notiles"); styleMap(); paintAdmin(); } });
+function toFallback() { if (NT()) return; BOX.classList.add("notiles"); styleMap(); paintAdmin(); const n = $("#tileNote"); if (n) n.hidden = /github\.io$/.test(location.hostname); }
+tiles.on("tileload", () => { tOk++; if (NT()) { BOX.classList.remove("notiles"); styleMap(); paintAdmin(); const n = $("#tileNote"); if (n) n.hidden = true; } });
+// 한 장이 실패하면 OSM 프랑스 미러에서 한 번 더 받아 빈칸을 남기지 않음
+tiles.on("tileerror", e => { tErr++; const t = e.tile, c = e.coords; if (t && !t.dataset.retry) { t.dataset.retry = 1; t.src = `https://${"abc"[(c.x + c.y) % 3]}.tile.openstreetmap.fr/osmfr/${c.z}/${c.x}/${c.y}.png`; return; } if (tErr >= 6 && tOk === 0) toFallback(); });
+setTimeout(() => { if (tOk === 0) toFallback(); }, 7000);
+// 화면 크기가 바뀌거나(폰 주소창, 글꼴 로딩) 레이아웃이 늦게 잡혀도 지도 크기를 다시 맞춤
+try { new ResizeObserver(() => map.invalidateSize({ pan: false })).observe(document.getElementById("map")); } catch (e) { addEventListener("resize", () => map.invalidateSize()); }
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => map.invalidateSize());
 const NT = () => BOX.classList.contains("notiles");
 const R = L.canvas({ padding: 0.3 });
 [["sido", 400], ["muni", 410], ["label", 420], ["route", 450]].forEach(([n, z]) => { map.createPane(n).style.zIndex = z; });
@@ -3560,6 +3573,7 @@ function paintAdmin() {
   want(muniL, nt && z >= 8); want(muniLbl, nt && z >= 10);
   Object.values(sidoLbl).forEach(m => want(m, nt && z <= 8));
   $("#map").classList.toggle("showlb", z >= 9);
+  $("#map").classList.toggle("showall", z >= 12);
 }
 map.on("zoomend", () => { paintAdmin(); layoutMarkers(); });
 
@@ -3583,11 +3597,11 @@ function mkHtml(f) {
 // 가까운 마커는 화면에서 겹치지 않게 부채꼴로 벌림
 function layoutMarkers() {
   const vis = VIS.filter(f => map.hasLayer(f.mk)), z = map.getZoom(), groups = [];
-  vis.forEach(f => { const p = map.project([f.lat, f.lng], z); let g = groups.find(g => g.p.distanceTo(p) < 30); if (g) g.list.push(f); else groups.push({ p, list: [f] }); });
+  vis.forEach(f => { const p = map.project([f.lat, f.lng], z); let g = groups.find(g => g.p.distanceTo(p) < 40); if (g) g.list.push(f); else groups.push({ p, list: [f] }); });
   groups.forEach(g => g.list.forEach((f, i) => {
     let dx = 0, dy = 0; const n = g.list.length;
-    if (n > 1) { const r = 14 + n * 3, a = -Math.PI / 2 + i * 2 * Math.PI / n; dx = Math.round(Math.cos(a) * r); dy = Math.round(Math.sin(a) * r); }
-    f.mk.setIcon(L.divIcon({ className: "", html: mkHtml(f), iconSize: [34, 34], iconAnchor: [17 - dx, 17 - dy] }));
+    if (n > 1) { const r = 20 + n * 4, a = -Math.PI / 2 + i * 2 * Math.PI / n; dx = Math.round(Math.cos(a) * r); dy = Math.round(Math.sin(a) * r); }
+    f.mk.setIcon(L.divIcon({ className: "", html: mkHtml(f).replace('class="fm ', `class="fm ${n > 1 ? "grp" : ""} `), iconSize: [34, 34], iconAnchor: [17 - dx, 17 - dy] }));
     f.mk.setZIndexOffset(f.st.k === "live" ? 1000 : f.st.k === "soon" ? 500 : 0);
   }));
 }
