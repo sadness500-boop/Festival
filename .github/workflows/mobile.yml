@@ -32,7 +32,11 @@ jobs:
         working-directory: mobile/android
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon --stacktrace
+          set -o pipefail
+          if ! ./gradlew assembleRelease --no-daemon --console=plain 2>&1 | tee build.log; then
+            grep -E "What went wrong|error:|Error|FAILURE|Exception|> " build.log | head -40 | while IFS= read -r l; do echo "::error::$l"; done
+            exit 1
+          fi
           mkdir -p ../../dist
           cp app/build/outputs/apk/release/app-release.apk ../../dist/PaldoFestival.apk
       - uses: actions/upload-artifact@v4
