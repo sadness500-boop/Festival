@@ -3532,7 +3532,8 @@ map.attributionControl.addAttribution("경계 © 통계청 · 축제 정보 2026
 const BOX = document.querySelector(".mapbox");
 // 웹 주소(https)로 열면 OpenStreetMap, PC에 저장한 파일(file://)로 열면 Esri 지도를 씁니다.
 // (OSM 서버는 주소 정보가 없는 파일 요청에 'Access blocked' 그림을 보내기 때문)
-const FILE_MODE = location.protocol === "file:" || location.origin === "null" || /[?&]tiles=esri/.test(location.search);
+const IS_APP = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); // 안드로이드·아이폰 앱 안에서 실행 중
+const FILE_MODE = IS_APP || location.protocol === "file:" || location.origin === "null" || /[?&]tiles=esri/.test(location.search);
 const OSM = { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", alt: c => `https://${"abc"[(c.x + c.y) % 3]}.tile.openstreetmap.fr/osmfr/${c.z}/${c.x}/${c.y}.png`, attr: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자' };
 const ESRI = { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", alt: c => `https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${c.z}/${c.y}/${c.x}`, attr: '지도 &copy; Esri, HERE, Garmin, OpenStreetMap 기여자' };
 const TILE = FILE_MODE ? ESRI : OSM;
@@ -3897,6 +3898,7 @@ async function routeTo(f, quiet) {
 
 // ── 앱 다운로드 QR · 친구 초대 ──
 const APP_URL = "https://sadness500-boop.github.io/Festival/";
+const DL_URL = APP_URL + "app.html"; // 앱 다운로드 안내 페이지(안드로이드 APK · 아이폰)
 function qrSvg(text) {
   try { const q = qrcode(0, "M"); q.addData(text); q.make(); return q.createSvgTag({ cellSize: 6, margin: 2, scalable: true }); }
   catch (e) { return `<div style="padding:30px;color:#333;font-size:13px">QR 도구를 불러오지 못했습니다.<br>아래 주소를 직접 입력하세요.</div>`; }
@@ -3905,18 +3907,22 @@ let installEvt = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; });
 function sheet(html, cls) { lastFocus = document.activeElement; const p = $("#pop"); p.className = "pop sheet " + (cls || ""); p.innerHTML = `<button class="x" type="button" id="popX" aria-label="닫기">×</button>` + html; $("#scrim").hidden = false; $("#popX").onclick = () => closeDetail(true); $("#popX").focus(); }
 async function copyText(t, ok) { try { await navigator.clipboard.writeText(t); toast(ok); } catch (e) { toast("복사가 막혀 있습니다. 글자를 길게 눌러 복사하세요"); } }
-async function share(d) { if (navigator.share) { try { await navigator.share(d); return; } catch (e) { if (e && e.name === "AbortError") return; } } copyText(`${d.text}\n${d.url}`, "공유할 내용을 복사했습니다. 카카오톡·문자에 붙여넣으세요"); }
+async function share(d) {
+  const SP = IS_APP && window.Capacitor.Plugins && window.Capacitor.Plugins.Share;
+  if (SP) { try { await SP.share({ title: d.title, text: d.text, url: d.url, dialogTitle: "공유하기" }); return; } catch (e) { if (/cancel/i.test(String(e && e.message))) return; } }
+  if (navigator.share) { try { await navigator.share(d); return; } catch (e) { if (e && e.name === "AbortError") return; } } copyText(`${d.text}\n${d.url}`, "공유할 내용을 복사했습니다. 카카오톡·문자에 붙여넣으세요"); }
 $("#qrBtn").onclick = () => {
   sheet(`<div class="sheet-b"><div class="eb">앱 다운로드</div><h3 id="popT">휴대폰 카메라로 QR을 찍으세요</h3>
-    <div class="qr">${qrSvg(APP_URL)}</div>
-    <div class="url"><span>${APP_URL}</span><button class="btn" type="button" id="cpUrl">주소 복사</button></div>
+    <div class="qr">${qrSvg(DL_URL)}</div>
+    <div class="url"><span>${DL_URL}</span><button class="btn" type="button" id="cpUrl">주소 복사</button></div>
+    <div class="acts"><a class="btn primary" href="https://github.com/sadness500-boop/Festival/releases/latest/download/PaldoFestival.apk" target="_blank" rel="noopener">안드로이드 앱(APK) 받기</a><a class="btn" href="${DL_URL}" target="_blank" rel="noopener">아이폰 설치 안내</a></div>
     ${installEvt ? `<button class="btn primary" type="button" id="install">이 기기에 앱 설치</button>` : ""}
-    <ol class="steps"><li><b>안드로이드</b> 크롬으로 열기 → 아래쪽 ‘앱 설치’ 또는 메뉴(⋮) → ‘홈 화면에 추가’</li><li><b>아이폰</b> 사파리로 열기 → 공유(□↑) → ‘홈 화면에 추가’</li><li>홈 화면 아이콘으로 열면 주소창 없이 앱처럼 실행되고, GPS로 내 위치를 실시간 표시합니다.</li></ol></div>`, "qrs");
-  $("#cpUrl").onclick = () => copyText(APP_URL, "앱 주소를 복사했습니다");
+    <ol class="steps"><li><b>안드로이드</b> QR → ‘안드로이드 앱 받기’ → 내려받은 APK 열기 → ‘이 출처 허용’ 후 설치</li><li><b>아이폰</b> QR을 사파리로 열기 → 공유(□↑) → ‘홈 화면에 추가’ (앱 아이콘으로 실행)</li><li>앱으로 열면 GPS로 내 위치를 실시간 표시하고, 축제장까지 길찾기를 합니다.</li></ol></div>`, "qrs");
+  $("#cpUrl").onclick = () => copyText(DL_URL, "앱 다운로드 주소를 복사했습니다");
   const ib = $("#install"); if (ib) ib.onclick = async () => { installEvt.prompt(); const r = await installEvt.userChoice; installEvt = null; toast(r.outcome === "accepted" ? "앱을 설치했습니다" : "설치를 취소했습니다"); };
 };
 $("#inviteBtn").onclick = () => {
-  const msg = `전국 축제를 지도 한 장에! 지금 진행 중인 축제, 가까운 축제, 입장료·홈페이지·길찾기까지 '팔도 축제길'에서 확인해 보세요.`;
+  const msg = `전국 축제를 지도 한 장에! 지금 진행 중인 축제, 가까운 축제, 입장료·홈페이지·길찾기까지 '팔도 축제길'에서 확인해 보세요. 휴대폰 앱 받기: ${DL_URL}`;
   sheet(`<div class="sheet-b"><div class="eb">친구 초대</div><h3 id="popT">팔도 축제길에 친구를 초대하세요</h3>
     <label for="invMsg" class="lab">초대 메시지</label><textarea id="invMsg" rows="3">${esc(msg)}</textarea>
     <div class="url"><span>${APP_URL}</span></div>
@@ -3937,4 +3943,4 @@ locate("auto");
 const h0 = (location.hash || "").slice(1); const f0 = h0 && FEST.find(f => f.id === h0); if (f0) setTimeout(() => { map.setView([f0.lat, f0.lng], 11); openDetail(f0); }, 300);
 
 </script>
-<script>if("serviceWorker" in navigator&&location.protocol==="https:")addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script></body></html>
+<script>if("serviceWorker" in navigator&&location.protocol==="https:"&&!window.Capacitor)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script></body></html>

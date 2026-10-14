@@ -1,0 +1,8 @@
+{
+  "appId": "com.ratrae.paldofestival",
+  "appName": "팔도 축제길",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never" }
+}

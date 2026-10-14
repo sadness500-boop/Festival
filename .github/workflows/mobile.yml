@@ -1,0 +1,85 @@
+name: 휴대폰 앱 빌드 (안드로이드 APK · 아이폰 IPA)
+
+on:
+  push:
+    branches: [main]
+    paths: ["index.html", "icons/**", "mobile/**", ".github/workflows/mobile.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mobile-build
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "17" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: 앱 준비 (웹 화면 복사 · 플러그인 동기화)
+        working-directory: mobile
+        run: |
+          npm ci --no-audit --no-fund
+          node scripts/prepare-web.mjs
+          npx cap sync android
+      - name: APK 빌드 (서명 포함)
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon --stacktrace
+          mkdir -p ../../dist
+          cp app/build/outputs/apk/release/app-release.apk ../../dist/PaldoFestival.apk
+      - uses: actions/upload-artifact@v4
+        with: { name: android, path: dist/PaldoFestival.apk }
+
+  ios:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: 앱 준비
+        working-directory: mobile
+        run: |
+          npm ci --no-audit --no-fund
+          node scripts/prepare-web.mjs
+          npx cap sync ios
+      - name: 서명 전 IPA 빌드
+        working-directory: mobile/ios/App
+        run: |
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -sdk iphoneos \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" build
+          mkdir -p Payload ../../../dist
+          cp -R build/Build/Products/Release-iphoneos/App.app Payload/
+          zip -qr ../../../dist/PaldoFestival-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with: { name: ios, path: dist/PaldoFestival-unsigned.ipa }
+
+  release:
+    needs: [android, ios]
+    if: always() && needs.android.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { path: dist, merge-multiple: true }
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: app-v1.3.${{ github.run_number }}
+          name: 팔도 축제길 앱 v1.3.${{ github.run_number }}
+          make_latest: true
+          fail_on_unmatched_files: false
+          files: |
+            dist/PaldoFestival.apk
+            dist/PaldoFestival-unsigned.ipa
+          body: |
+            ## 팔도 축제길 휴대폰 앱
+            - **안드로이드**: `PaldoFestival.apk` 내려받기 → 열기 → '이 출처 허용' → 설치 → 위치 권한 허용
+            - **아이폰**: 사파리에서 https://sadness500-boop.github.io/Festival/ → 공유 → 홈 화면에 추가 (권장)
+              - `PaldoFestival-unsigned.ipa`는 서명 전 파일입니다. Sideloadly 등으로 본인 Apple ID 서명 후 설치하세요.
+            - 설치 안내 페이지: https://sadness500-boop.github.io/Festival/app.html
