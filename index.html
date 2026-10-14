@@ -3530,12 +3530,18 @@ map.attributionControl.setPrefix(false);
 map.attributionControl.addAttribution("경계 © 통계청 · 축제 정보 2026.10.14 조사");
 // 배경지도: OpenStreetMap 타일(실제 도로·지명). 타일이 막힌 곳(예: claude.ai 미리보기)에서는 내장 행정경계 지도로 자동 전환
 const BOX = document.querySelector(".mapbox");
-const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, keepBuffer: 4, updateWhenZooming: false, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자' }).addTo(map);
+// 웹 주소(https)로 열면 OpenStreetMap, PC에 저장한 파일(file://)로 열면 Esri 지도를 씁니다.
+// (OSM 서버는 주소 정보가 없는 파일 요청에 'Access blocked' 그림을 보내기 때문)
+const FILE_MODE = location.protocol === "file:" || location.origin === "null" || /[?&]tiles=esri/.test(location.search);
+const OSM = { url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", alt: c => `https://${"abc"[(c.x + c.y) % 3]}.tile.openstreetmap.fr/osmfr/${c.z}/${c.x}/${c.y}.png`, attr: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 기여자' };
+const ESRI = { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", alt: c => `https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${c.z}/${c.y}/${c.x}`, attr: '지도 &copy; Esri, HERE, Garmin, OpenStreetMap 기여자' };
+const TILE = FILE_MODE ? ESRI : OSM;
+const tiles = L.tileLayer(TILE.url, { maxZoom: 19, keepBuffer: 4, updateWhenZooming: false, attribution: TILE.attr }).addTo(map);
 let tOk = 0, tErr = 0;
 function toFallback() { if (NT()) return; BOX.classList.add("notiles"); styleMap(); paintAdmin(); const n = $("#tileNote"); if (n) n.hidden = /github\.io$/.test(location.hostname); }
 tiles.on("tileload", () => { tOk++; if (NT()) { BOX.classList.remove("notiles"); styleMap(); paintAdmin(); const n = $("#tileNote"); if (n) n.hidden = true; } });
-// 한 장이 실패하면 OSM 프랑스 미러에서 한 번 더 받아 빈칸을 남기지 않음
-tiles.on("tileerror", e => { tErr++; const t = e.tile, c = e.coords; if (t && !t.dataset.retry) { t.dataset.retry = 1; t.src = `https://${"abc"[(c.x + c.y) % 3]}.tile.openstreetmap.fr/osmfr/${c.z}/${c.x}/${c.y}.png`; return; } if (tErr >= 6 && tOk === 0) toFallback(); });
+// 한 장이 실패하면 예비 서버에서 한 번 더 받아 빈칸을 남기지 않음
+tiles.on("tileerror", e => { tErr++; const t = e.tile, c = e.coords; if (t && !t.dataset.retry) { t.dataset.retry = 1; t.src = TILE.alt(c); return; } if (tErr >= 6 && tOk === 0) toFallback(); });
 setTimeout(() => { if (tOk === 0) toFallback(); }, 7000);
 // 화면 크기가 바뀌거나(폰 주소창, 글꼴 로딩) 레이아웃이 늦게 잡혀도 지도 크기를 다시 맞춤
 try { new ResizeObserver(() => map.invalidateSize({ pan: false })).observe(document.getElementById("map")); } catch (e) { addEventListener("resize", () => map.invalidateSize()); }
