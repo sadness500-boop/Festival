@@ -772,6 +772,21 @@ select.sel{height:34px;border-radius:999px;border:1px solid var(--line);backgrou
 .maphint{position:absolute;z-index:500;left:50%;top:10px;transform:translateX(-50%);background:var(--ink);color:var(--paper);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;box-shadow:var(--shadow-s)}
 .fitbtn{position:absolute;z-index:500;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}
 .fitbtn .btn{height:34px;box-shadow:var(--shadow-s)}
+.fitbtn{align-items:flex-end}
+.basemap{box-shadow:var(--shadow-s)}.basemap button{padding:4px 10px;font-size:12.5px}
+#map{z-index:0}
+#kmap{position:absolute;inset:0;z-index:1;background:var(--land)}
+.mapbox.kakao .leaflet-control-attribution{display:none}
+.kk-mk{width:34px;height:34px;cursor:pointer}
+.kk-me{width:22px;height:22px;cursor:pointer}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #kmap img{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.55)}}
+:root[data-theme="dark"] #kmap img{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.85) saturate(.55)}
+.addrf{display:flex;gap:8px}.addrf input{flex:1;min-width:0;height:42px;border-radius:999px;border:1px solid var(--line);background:var(--bg);padding:0 14px;font:inherit}
+.addrr{display:grid;gap:4px;max-height:46vh;overflow:auto}
+.addri{display:grid;text-align:left;border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:8px 12px;cursor:pointer;font:inherit;color:var(--ink)}
+.addri:hover{border-color:var(--ink)}.addri small{color:var(--muted);font-size:12px}
+.steps code{font-size:12px;background:var(--bg);padding:0 4px;border-radius:4px;user-select:all}
+.steps a{color:var(--accent);font-weight:700}
 
 /* 지도 위 행정경계 라벨 */
 .sl{font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);white-space:nowrap;transform:translate(-50%,-50%);text-shadow:0 0 3px var(--land),0 0 3px var(--land)}
@@ -799,7 +814,7 @@ select.sel{height:34px;border-radius:999px;border:1px solid var(--line);backgrou
 .me-dot{position:relative}
 .me-dot i{position:absolute;inset:3px;border-radius:50%;background:var(--me);border:3px solid #fff;box-shadow:0 0 0 2px var(--me),var(--shadow-s)}
 .me-dot[data-m="ip"] i{background:var(--me-ip);box-shadow:0 0 0 2px var(--me-ip)}
-.me-dot[data-m="manual"] i,.me-dot[data-m="saved"] i{background:var(--me-pick);box-shadow:0 0 0 2px var(--me-pick)}
+.me-dot[data-m="manual"] i,.me-dot[data-m="saved"] i,.me-dot[data-m="addr"] i{background:var(--me-pick);box-shadow:0 0 0 2px var(--me-pick)}
 .me-dot[data-m="gps"]::before,.me-dot[data-m="wifi"]::before{content:"";position:absolute;inset:-4px;border-radius:50%;background:var(--me);opacity:.25;animation:ring 2s infinite}
 .me-dot .hd{position:absolute;left:50%;top:50%;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid var(--me);transform-origin:50% 100%;margin:-21px 0 0 -6px}
 
@@ -930,8 +945,8 @@ textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:v
     <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
       <input id="q" type="search" placeholder="축제·지역·먹거리 검색 (예: 불꽃, 해운대, 사과)" autocomplete="off" aria-label="축제 검색"></label>
     <div class="tools top2">
-      <button class="btn" id="qrBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg><span>앱 다운로드 QR</span></button>
-      <button class="btn" id="inviteBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M19 8v6M16 11h6"/></svg><span>친구 초대</span></button>
+      <button class="btn" id="qrBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg><span>다운로드 QR</span></button>
+      <button class="btn" id="inviteBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M19 8v6M16 11h6"/></svg><span>친구 추천</span></button>
     </div>
     <div class="tools">
       <button class="btn locchip" id="locChip" type="button" data-m=""><i></i><span id="locTxt">내 위치 찾는 중…</span></button>
@@ -960,7 +975,8 @@ textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:v
   <main class="main">
     <section class="mapbox" aria-label="축제 지도">
       <div id="map"></div>
-      <div class="fitbtn"><button class="btn" id="fitAll" type="button">전국 보기</button><button class="btn" id="fitMe" type="button">내 주변</button></div>
+      <div id="kmap" hidden></div>
+      <div class="fitbtn"><div class="seg basemap" id="basemap" role="group" aria-label="지도 종류"><button type="button" data-b="kakao" aria-pressed="false">카카오맵</button><button type="button" data-b="osm" aria-pressed="true">기본 지도</button></div><button class="btn" id="fitAll" type="button">전국 보기</button><button class="btn" id="fitMe" type="button">내 주변</button></div>
       <div class="maphint" id="hint" hidden></div>
       <div class="legend" id="legend"></div>
       <div class="route" id="route" hidden></div>
@@ -3608,9 +3624,11 @@ function layoutMarkers() {
   groups.forEach(g => g.list.forEach((f, i) => {
     let dx = 0, dy = 0; const n = g.list.length;
     if (n > 1) { const r = 20 + n * 4, a = -Math.PI / 2 + i * 2 * Math.PI / n; dx = Math.round(Math.cos(a) * r); dy = Math.round(Math.sin(a) * r); }
+    f._dx = dx; f._dy = dy; f._grp = n > 1;
     f.mk.setIcon(L.divIcon({ className: "", html: mkHtml(f).replace('class="fm ', `class="fm ${n > 1 ? "grp" : ""} `), iconSize: [34, 34], iconAnchor: [17 - dx, 17 - dy] }));
     f.mk.setZIndexOffset(f.st.k === "live" ? 1000 : f.st.k === "soon" ? 500 : 0);
   }));
+  kkMarkers();
 }
 
 // ── 필터 상태 ──
@@ -3740,14 +3758,14 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") { if (!$("#s
 
 // ── 내 위치: PC는 IP, 폰은 GPS(실시간 추적) ──
 const LOC = { last: null, mk: null, circ: null, watch: null, follow: false, centered: false, listT: 0, listAt: null };
-const LOC_METHOD = { gps: "GPS", wifi: "Wi-Fi·기지국", ip: "IP 주소", manual: "지도에서 직접 지정", saved: "지난번 위치" };
+const LOC_METHOD = { gps: "GPS", wifi: "Wi-Fi·기지국", ip: "IP 주소", manual: "지도에서 직접 지정", addr: "주소·장소 검색", saved: "지난번 위치" };
 function chip(html, m) { $("#locTxt").innerHTML = html; $("#locChip").dataset.m = m || ""; }
 function zoomFor(acc) { return acc > 3000 ? 9 : 11; }
 function showLoc(lat, lng, acc, method, center, heading) {
   acc = Math.max(5, acc || 30);
   const name = placeName(lat, lng) || "지도 범위 밖";
   LOC.last = { lat, lng, acc, method, name, t: Date.now() };
-  const col = method === "ip" ? tok("me-ip") : method === "manual" || method === "saved" ? tok("me-pick") : tok("me");
+  const col = method === "ip" ? tok("me-ip") : method === "manual" || method === "saved" || method === "addr" ? tok("me-pick") : tok("me");
   if (!LOC.mk) {
     LOC.circ = L.circle([lat, lng], { radius: acc, weight: 1.5, fillOpacity: 0.1, interactive: false }).addTo(map);
     LOC.mk = L.marker([lat, lng], { icon: L.divIcon({ className: "me-dot", html: "<i></i>", iconSize: [22, 22], iconAnchor: [11, 11] }), zIndexOffset: 4000, title: "내 위치", keyboard: false }).addTo(map)
@@ -3756,9 +3774,10 @@ function showLoc(lat, lng, acc, method, center, heading) {
   LOC.circ.setStyle({ color: col, fillColor: col, dashArray: method === "ip" ? "6 6" : null });
   const el = LOC.mk.getElement(); if (el) { el.dataset.m = method; el.innerHTML = "<i></i>" + (heading != null && !isNaN(heading) ? `<b class="hd" style="transform:rotate(${heading}deg)"></b>` : ""); }
   const live = LOC.watch != null && (method === "gps" || method === "wifi");
-  chip(`${esc(name.split(" ").slice(-2).join(" "))} <small>${{ gps: "GPS", wifi: "Wi-Fi", ip: "IP", manual: "직접", saved: "지난번" }[method]} ±${acc >= 1000 ? Math.round(acc / 1000) + "km" : Math.round(acc) + "m"}${live ? " · 실시간" : ""}</small>`, method);
+  chip(`${esc(name.split(" ").slice(-2).join(" "))} <small>${{ gps: "GPS", wifi: "Wi-Fi", ip: "IP", manual: "직접", addr: "주소", saved: "지난번" }[method]} ±${acc >= 1000 ? Math.round(acc / 1000) + "km" : Math.round(acc) + "m"}${live ? " · 실시간" : ""}</small>`, method);
   if (method !== "saved") store.set("pfg.myloc", { lat, lng, acc, method });
   if (center || LOC.follow || !LOC.centered) { LOC.centered = true; map.setView([lat, lng], LOC.follow ? Math.max(map.getZoom(), 12) : zoomFor(acc)); }
+  kkMe();
   if (ROUTE.f && ROUTE.at && hav(ROUTE.at[0], ROUTE.at[1], lat, lng) > 0.3 && Date.now() - ROUTE.t > 30000) routeTo(ROUTE.f, true);
   // 목록 거리 갱신(이동 중에는 5초마다)
   const moved = !LOC.listAt || hav(LOC.listAt[0], LOC.listAt[1], lat, lng) > 0.03;
@@ -3810,7 +3829,13 @@ function endPick() { picking = false; $("#hint").hidden = true; if (pickH) map.o
 async function locate(mode) {
   closeLocMenu();
   if (mode === "auto") mode = IS_MOBILE || NATIVE_GEO() ? "gps" : "ip";
-  if (mode === "clear") { stopWatch(); if (LOC.mk) { map.removeLayer(LOC.mk); map.removeLayer(LOC.circ); LOC.mk = LOC.circ = null; } LOC.last = null; try { localStorage.removeItem("pfg.myloc"); } catch (e) {} chip("내 위치 정하기", ""); if (F.sort === "near") setF({ sort: "date" }); else renderList(); return; }
+  if (mode === "addr") { stopWatch(); addrSheet(); return; }
+  if (mode === "wifi") {
+    stopWatch(); chip("Wi-Fi·기지국으로 위치 찾는 중…", LOC.last ? LOC.last.method : "");
+    try { const p = await byGeo(false); showLoc(p.coords.latitude, p.coords.longitude, p.coords.accuracy, "wifi", true); return; }
+    catch (e) { toast(e && e.code === 1 ? "위치 권한이 꺼져 있어 IP로 대신 찾습니다" : "Wi-Fi 위치를 받지 못해 IP로 대신 찾습니다"); mode = "ip"; }
+  }
+  if (mode === "clear") { stopWatch(); if (LOC.mk) { map.removeLayer(LOC.mk); map.removeLayer(LOC.circ); LOC.mk = LOC.circ = null; } LOC.last = null; kkMe(); try { localStorage.removeItem("pfg.myloc"); } catch (e) {} chip("내 위치 정하기", ""); if (F.sort === "near") setF({ sort: "date" }); else renderList(); return; }
   if (mode === "manual") {
     stopWatch(); picking = true; const h = $("#hint"); h.textContent = "지도에서 내 위치를 누르세요 · Esc 취소"; h.hidden = false; $("#map").style.cursor = "crosshair";
     pickH = e => { endPick(); showLoc(e.latlng.lat, e.latlng.lng, 30, "manual", false); };
@@ -3819,12 +3844,22 @@ async function locate(mode) {
   if (mode === "gps") {
     chip("GPS로 위치 찾는 중…", LOC.last ? LOC.last.method : "");
     try { const p = await byGeo(true); showLoc(p.coords.latitude, p.coords.longitude, p.coords.accuracy, p.coords.accuracy < 120 ? "gps" : "wifi", true); startWatch(); return; }
-    catch (e) { toast(e && e.code === 1 ? "위치 권한이 꺼져 있어 IP로 대신 찾습니다" : "GPS를 쓸 수 없어 IP로 대신 찾습니다"); }
+    catch (e) {
+      if (e && e.code === 1) toast("위치 권한이 꺼져 있어 IP로 대신 찾습니다");
+      else { // GPS 신호가 약하면(실내 등) Wi-Fi·기지국 위치로 한 번 더
+        try { const p = await byGeo(false); showLoc(p.coords.latitude, p.coords.longitude, p.coords.accuracy, "wifi", true); startWatch(); return; } catch (e2) { toast("GPS를 쓸 수 없어 IP로 대신 찾습니다"); }
+      }
+    }
     mode = "ip";
   }
   if (mode === "ip") {
     stopWatch(); chip("IP로 위치 찾는 중…", LOC.last ? LOC.last.method : "");
-    try { const r = await byIP(); showLoc(r.lat, r.lng, 8000, "ip", true); return; }
+    try {
+      const r = await byIP(); showLoc(r.lat, r.lng, 8000, "ip", true);
+      // PC에서 이미 위치 권한을 허용해 둔 경우에는 Wi-Fi 위치로 조용히 더 정확하게 보정
+      try { const st = navigator.permissions && await navigator.permissions.query({ name: "geolocation" }); if (st && st.state === "granted") { const p = await byGeo(false); if (p.coords.accuracy < 8000) showLoc(p.coords.latitude, p.coords.longitude, p.coords.accuracy, "wifi", true); } } catch (e) {}
+      return;
+    }
     catch (e) {
       if (LOC.last) { toast("IP 위치를 받지 못해 지난 위치를 그대로 씁니다"); showLoc(LOC.last.lat, LOC.last.lng, LOC.last.acc, LOC.last.method === "ip" ? "saved" : LOC.last.method, false); }
       else chip("위치를 찾지 못했어요 <small>눌러서 직접 지정</small>", "");
@@ -3832,12 +3867,14 @@ async function locate(mode) {
   }
 }
 const locMenu = document.createElement("div"); locMenu.className = "menu"; locMenu.hidden = true; document.body.appendChild(locMenu);
-locMenu.innerHTML = `<button type="button" data-l="gps"><b>GPS·Wi-Fi 실시간 추적</b><small>휴대폰 권장 · 움직이면 지도 위 내 위치도 따라 움직입니다</small></button>
+locMenu.innerHTML = `<button type="button" data-l="gps"><b>GPS 실시간 추적</b><small>휴대폰 권장 · 움직이면 지도 위 내 위치도 따라 움직입니다</small></button>
 <button type="button" data-l="ip"><b>IP 주소로 찾기</b><small>PC 권장 · 통신사 위치라 몇 km 다를 수 있습니다</small></button>
+<button type="button" data-l="wifi"><b>Wi-Fi·기지국으로 찾기</b><small>PC·노트북에서 IP보다 정확 · 브라우저 위치 허용 필요</small></button>
+<button type="button" data-l="addr"><b>주소·장소로 정하기</b><small>집·회사 주소나 역 이름을 입력해 내 위치로</small></button>
 <button type="button" data-l="manual"><b>지도에서 직접 지정</b><small>위치 권한이 막혀 있을 때</small></button>
 <button type="button" data-l="clear"><b>위치 지우기</b><small>저장된 내 위치도 지웁니다</small></button>`;
 locMenu.onclick = e => { const b = e.target.closest("button"); if (b) locate(b.dataset.l); };
-function openLocMenu() { const r = $("#locChip").getBoundingClientRect(); locMenu.style.top = (r.bottom + window.scrollY + 6) + "px"; locMenu.style.left = Math.max(8, Math.min(window.innerWidth - 270, r.left)) + "px"; locMenu.hidden = false; }
+function openLocMenu() { const r = $("#locChip").getBoundingClientRect(); locMenu.style.top = (r.bottom + window.scrollY + 6) + "px"; locMenu.style.left = Math.max(8, Math.min(window.innerWidth - 300, r.left)) + "px"; locMenu.hidden = false; }
 function closeLocMenu() { locMenu.hidden = true; }
 $("#locChip").onclick = e => { e.stopPropagation(); locMenu.hidden ? openLocMenu() : closeLocMenu(); };
 document.addEventListener("click", e => { if (!locMenu.hidden && !locMenu.contains(e.target) && e.target.closest("#locChip") == null) closeLocMenu(); });
@@ -3869,9 +3906,10 @@ function drawRoute(geo, real) {
     L.polyline(geo, { pane: "route", color: tok("paper"), weight: 9, opacity: 0.9, interactive: false }),
     L.polyline(geo, { pane: "route", color: tok("me"), weight: 5, opacity: 0.95, dashArray: real ? null : "9 9", interactive: false })
   ]).addTo(map);
+  kkRoute();
 }
 function routePanel(h) { const el = $("#route"); el.innerHTML = h; el.hidden = !h; }
-function clearRoute() { if (ROUTE.layer) map.removeLayer(ROUTE.layer); ROUTE.layer = null; ROUTE.f = null; ROUTE.geo = null; routePanel(""); }
+function clearRoute() { if (ROUTE.layer) map.removeLayer(ROUTE.layer); ROUTE.layer = null; ROUTE.f = null; ROUTE.geo = null; routePanel(""); kkRoute(); }
 async function routeTo(f, quiet) {
   if (!LOC.last) { closeDetail(true); toast("먼저 내 위치를 찾습니다"); await locate("auto"); if (!LOC.last) { toast("내 위치를 정하면 길찾기를 할 수 있어요"); openLocMenu(); return; } }
   const a = LOC.last, seq = ++ROUTE.seq; ROUTE.f = f; ROUTE.at = [a.lat, a.lng]; ROUTE.t = Date.now();
@@ -3898,7 +3936,6 @@ async function routeTo(f, quiet) {
 
 // ── 앱 다운로드 QR · 친구 초대 ──
 const APP_URL = "https://sadness500-boop.github.io/Festival/";
-const DL_URL = APP_URL + "app.html"; // 앱 다운로드 안내 페이지(안드로이드 APK · 아이폰)
 function qrSvg(text) {
   try { const q = qrcode(0, "M"); q.addData(text); q.make(); return q.createSvgTag({ cellSize: 6, margin: 2, scalable: true }); }
   catch (e) { return `<div style="padding:30px;color:#333;font-size:13px">QR 도구를 불러오지 못했습니다.<br>아래 주소를 직접 입력하세요.</div>`; }
@@ -3912,31 +3949,165 @@ async function share(d) {
   if (SP) { try { await SP.share({ title: d.title, text: d.text, url: d.url, dialogTitle: "공유하기" }); return; } catch (e) { if (/cancel/i.test(String(e && e.message))) return; } }
   if (navigator.share) { try { await navigator.share(d); return; } catch (e) { if (e && e.name === "AbortError") return; } } copyText(`${d.text}\n${d.url}`, "공유할 내용을 복사했습니다. 카카오톡·문자에 붙여넣으세요"); }
 $("#qrBtn").onclick = () => {
-  sheet(`<div class="sheet-b"><div class="eb">앱 다운로드</div><h3 id="popT">휴대폰 카메라로 QR을 찍으세요</h3>
-    <div class="qr">${qrSvg(DL_URL)}</div>
-    <div class="url"><span>${DL_URL}</span><button class="btn" type="button" id="cpUrl">주소 복사</button></div>
-    <div class="acts"><a class="btn primary" href="https://github.com/sadness500-boop/Festival/releases/latest/download/PaldoFestival.apk" target="_blank" rel="noopener">안드로이드 앱(APK) 받기</a><a class="btn" href="${DL_URL}" target="_blank" rel="noopener">아이폰 설치 안내</a></div>
-    ${installEvt ? `<button class="btn primary" type="button" id="install">이 기기에 앱 설치</button>` : ""}
-    <ol class="steps"><li><b>안드로이드</b> QR → ‘안드로이드 앱 받기’ → 내려받은 APK 열기 → ‘이 출처 허용’ 후 설치</li><li><b>아이폰</b> QR을 사파리로 열기 → 공유(□↑) → ‘홈 화면에 추가’ (앱 아이콘으로 실행)</li><li>앱으로 열면 GPS로 내 위치를 실시간 표시하고, 축제장까지 길찾기를 합니다.</li></ol></div>`, "qrs");
-  $("#cpUrl").onclick = () => copyText(DL_URL, "앱 다운로드 주소를 복사했습니다");
-  const ib = $("#install"); if (ib) ib.onclick = async () => { installEvt.prompt(); const r = await installEvt.userChoice; installEvt = null; toast(r.outcome === "accepted" ? "앱을 설치했습니다" : "설치를 취소했습니다"); };
+  sheet(`<div class="sheet-b"><div class="eb">다운로드 QR</div><h3 id="popT">사이트 주소를 북마크해 두세요</h3>
+    <div class="qr">${qrSvg(APP_URL)}</div>
+    <div class="url"><span>${APP_URL}</span><button class="btn" type="button" id="cpUrl">주소 복사</button></div>
+    ${installEvt ? `<button class="btn primary" type="button" id="install">홈 화면에 바로가기 추가</button>` : ""}
+    <ol class="steps"><li><b>휴대폰</b> 카메라로 QR을 찍어 사이트를 엽니다 → 브라우저 메뉴(⋮ 또는 □↑) → <b>북마크 추가</b> 또는 <b>홈 화면에 추가</b></li><li><b>PC</b> 사이트를 연 상태에서 <b>Ctrl + D</b>(맥은 ⌘ + D)를 누르면 북마크됩니다.</li><li>북마크한 주소로 열면 언제나 최신 축제 정보와 내 위치 지도가 나옵니다.</li></ol></div>`, "qrs");
+  $("#cpUrl").onclick = () => copyText(APP_URL, "사이트 주소를 복사했습니다");
+  const ib = $("#install"); if (ib) ib.onclick = async () => { installEvt.prompt(); const r = await installEvt.userChoice; installEvt = null; toast(r.outcome === "accepted" ? "홈 화면에 추가했습니다" : "추가를 취소했습니다"); };
 };
 $("#inviteBtn").onclick = () => {
-  const msg = `전국 축제를 지도 한 장에! 지금 진행 중인 축제, 가까운 축제, 입장료·홈페이지·길찾기까지 '팔도 축제길'에서 확인해 보세요. 휴대폰 앱 받기: ${DL_URL}`;
-  sheet(`<div class="sheet-b"><div class="eb">친구 초대</div><h3 id="popT">팔도 축제길에 친구를 초대하세요</h3>
-    <label for="invMsg" class="lab">초대 메시지</label><textarea id="invMsg" rows="3">${esc(msg)}</textarea>
-    <div class="url"><span>${APP_URL}</span></div>
-    <div class="acts"><button class="btn primary" type="button" id="invShare">카카오톡·문자로 보내기</button><button class="btn" type="button" id="invCopy">메시지+링크 복사</button><button class="btn" type="button" id="invLink">링크만 복사</button></div>
-    <div class="qr small">${qrSvg(APP_URL)}</div><p class="hint2">옆에 있는 친구는 이 QR을 찍으면 바로 열립니다.</p></div>`, "qrs");
+  const msg = `전국 축제를 지도 한 장에! 지금 진행 중인 축제, 내 주변 축제, 입장료·홈페이지·길찾기까지 '팔도 축제길'에서 확인해 보세요. 주소를 북마크해 두면 언제든 열 수 있어요.`;
+  sheet(`<div class="sheet-b"><div class="eb">친구 추천</div><h3 id="popT">친구에게 팔도 축제길을 추천하세요</h3>
+    <label for="invMsg" class="lab">추천 메시지</label><textarea id="invMsg" rows="3">${esc(msg)}</textarea>
+    <div class="url"><span>${APP_URL}</span><button class="btn" type="button" id="invLink">주소 복사</button></div>
+    <div class="acts"><button class="btn primary" type="button" id="invShare">카카오톡·문자로 보내기</button><button class="btn" type="button" id="invCopy">메시지+주소 복사</button></div>
+    <div class="qr small">${qrSvg(APP_URL)}</div><p class="hint2">옆에 있는 친구는 이 QR을 찍어 사이트를 열고 북마크하면 됩니다.</p></div>`, "qrs");
   const m = () => $("#invMsg").value.trim();
   $("#invShare").onclick = () => share({ title: "팔도 축제길", text: m(), url: APP_URL });
-  $("#invCopy").onclick = () => copyText(`${m()}\n${APP_URL}`, "초대 메시지를 복사했습니다");
-  $("#invLink").onclick = () => copyText(APP_URL, "링크를 복사했습니다");
+  $("#invCopy").onclick = () => copyText(`${m()}\n${APP_URL}`, "추천 메시지를 복사했습니다");
+  $("#invLink").onclick = () => copyText(APP_URL, "사이트 주소를 복사했습니다");
 };
+
+// ── 주소·장소로 내 위치 정하기 (카카오 장소검색 → 없으면 OpenStreetMap 검색) ──
+async function geoSearch(q) {
+  if (window.kakao && kakao.maps && kakao.maps.services) {
+    const ps = new kakao.maps.services.Places();
+    const r = await new Promise(ok => ps.keywordSearch(q, (d, s) => ok(s === kakao.maps.services.Status.OK ? d : []), { size: 8 }));
+    if (r.length) return r.map(d => ({ name: d.place_name, addr: d.road_address_name || d.address_name, lat: +d.y, lng: +d.x }));
+    const g = new kakao.maps.services.Geocoder();
+    const r2 = await new Promise(ok => g.addressSearch(q, (d, s) => ok(s === kakao.maps.services.Status.OK ? d : [])));
+    if (r2.length) return r2.map(d => ({ name: d.address_name, addr: d.road_address ? d.road_address.address_name : "", lat: +d.y, lng: +d.x }));
+  }
+  const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 8000);
+  const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&countrycodes=kr&accept-language=ko&limit=8&q=${encodeURIComponent(q)}`, { signal: ctl.signal }); clearTimeout(tm);
+  const j = await res.json();
+  return j.map(d => ({ name: d.name || d.display_name.split(",")[0], addr: d.display_name, lat: +d.lat, lng: +d.lon }));
+}
+function addrSheet() {
+  sheet(`<div class="sheet-b"><div class="eb">내 위치 정하기</div><h3 id="popT">주소나 장소 이름을 입력하세요</h3>
+    <form id="addrF" class="addrf"><input id="addrQ" type="search" placeholder="예: 화명동 롯데캐슬, 해운대역, 부산시청" autocomplete="off" aria-label="주소·장소"><button class="btn primary" type="submit">찾기</button></form>
+    <div id="addrR" class="addrr"><p class="hint2">도로명·지번 주소, 아파트, 역, 건물 이름 모두 됩니다.</p></div></div>`, "qrs");
+  setTimeout(() => $("#addrQ").focus(), 50);
+  $("#addrF").onsubmit = async e => {
+    e.preventDefault(); const q = $("#addrQ").value.trim(); if (!q) return;
+    const box = $("#addrR"); box.innerHTML = `<p class="hint2">찾는 중…</p>`;
+    let list = []; try { list = await geoSearch(q); } catch (err) {}
+    if (!list.length) { box.innerHTML = `<p class="hint2">찾지 못했습니다. 동 이름이나 건물 이름으로 다시 입력해 보세요.</p>`; return; }
+    box.innerHTML = list.map((d, i) => `<button type="button" class="addri" data-i="${i}"><b>${esc(d.name)}</b><small>${esc(d.addr)}</small></button>`).join("");
+    box.onclick = ev => { const b = ev.target.closest(".addri"); if (!b) return; const d = list[+b.dataset.i]; closeDetail(true); showLoc(d.lat, d.lng, 50, "addr", true); toast(`내 위치를 '${d.name}'(으)로 정했습니다`); };
+  };
+}
+
+// ── 카카오맵 연동 ──
+// 카카오 디벨로퍼스(developers.kakao.com)에서 받은 JavaScript 키를 넣으면 기본 지도가 카카오맵이 됩니다.
+// 키의 [플랫폼 → Web 사이트 도메인]에 https://sadness500-boop.github.io (앱은 https://localhost) 를 등록해야 지도가 열립니다.
+const KAKAO_JS_KEY = "";
+const KAKAO_OK = location.protocol === "https:" || IS_APP || location.hostname === "localhost"; // PC 파일(file://)·claude.ai 미리보기에서는 카카오 정책상 열리지 않음
+const KK = { on: false, map: null, ov: new Map(), me: null, meC: null, lines: [], sync: false, loading: null };
+const kakaoKey = () => store.get("pfg.kakaokey", "") || KAKAO_JS_KEY;
+const kLvl = z => Math.max(1, Math.min(14, 19 - Math.round(z)));
+const kZ = l => 19 - l;
+function loadKakao(key) {
+  if (window.kakao && kakao.maps && kakao.maps.Map) return Promise.resolve();
+  if (KK.loading) return KK.loading;
+  KK.loading = new Promise((ok, no) => {
+    const s = document.createElement("script"), tm = setTimeout(() => no(new Error("timeout")), 9000);
+    s.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key)}&autoload=false&libraries=services`;
+    s.onload = () => { if (window.kakao && kakao.maps && kakao.maps.load) kakao.maps.load(() => { clearTimeout(tm); ok(); }); else { clearTimeout(tm); no(new Error("sdk")); } };
+    s.onerror = () => { clearTimeout(tm); no(new Error("load")); };
+    document.head.appendChild(s);
+  }).catch(e => { KK.loading = null; throw e; });
+  return KK.loading;
+}
+function kkView() {
+  if (!KK.on || KK.sync) return;
+  const c = map.getCenter(), L2 = kLvl(map.getZoom()), kc = KK.map.getCenter();
+  if (KK.map.getLevel() === L2 && Math.abs(kc.getLat() - c.lat) < 1e-6 && Math.abs(kc.getLng() - c.lng) < 1e-6) return;
+  KK.sync = true; KK.map.setLevel(L2, { animate: false }); KK.map.setCenter(new kakao.maps.LatLng(c.lat, c.lng)); setTimeout(() => { KK.sync = false; }, 60);
+  const k = $("#kmap"), z = map.getZoom(); k.classList.toggle("showlb", z >= 9); k.classList.toggle("showall", z >= 12);
+}
+function kkMarkers() {
+  if (!KK.on) return;
+  const want = new Set(VIS.map(f => f.id));
+  KK.ov.forEach((o, id) => { if (!want.has(id)) { o.setMap(null); KK.ov.delete(id); } });
+  VIS.forEach(f => {
+    let o = KK.ov.get(f.id);
+    if (!o) {
+      const el = document.createElement("div"); el.className = "kk-mk"; el.addEventListener("click", ev => { ev.stopPropagation(); openDetail(f); });
+      o = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(f.lat, f.lng), content: el, xAnchor: 0.5, yAnchor: 0.5, clickable: true });
+      o.el = el; o.setMap(KK.map); KK.ov.set(f.id, o);
+    }
+    o.el.innerHTML = mkHtml(f).replace('class="fm ', `class="fm ${f._grp ? "grp" : ""} `);
+    o.el.style.transform = `translate(${f._dx || 0}px, ${f._dy || 0}px)`;
+    o.setZIndex(f.st.k === "live" ? 30 : f.st.k === "soon" ? 20 : 10);
+  });
+}
+function kkMe() {
+  if (!KK.on) return;
+  if (KK.me) { KK.me.setMap(null); KK.meC.setMap(null); KK.me = KK.meC = null; }
+  const a = LOC.last; if (!a) return;
+  const col = a.method === "ip" ? tok("me-ip") : ["manual", "saved", "addr"].includes(a.method) ? tok("me-pick") : tok("me");
+  const el = document.createElement("div"); el.className = "me-dot kk-me"; el.dataset.m = a.method; el.innerHTML = "<i></i>"; el.title = "내 위치"; el.onclick = () => openLocMenu();
+  KK.me = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(a.lat, a.lng), content: el, xAnchor: 0.5, yAnchor: 0.5, zIndex: 50, clickable: true }); KK.me.setMap(KK.map);
+  KK.meC = new kakao.maps.Circle({ center: new kakao.maps.LatLng(a.lat, a.lng), radius: a.acc, strokeWeight: 1.5, strokeColor: col, strokeOpacity: 0.9, strokeStyle: a.method === "ip" ? "shortdash" : "solid", fillColor: col, fillOpacity: 0.1 }); KK.meC.setMap(KK.map);
+}
+function kkRoute() {
+  if (!KK.on) return;
+  KK.lines.forEach(l => l.setMap(null)); KK.lines = [];
+  if (!ROUTE.geo) return;
+  const path = ROUTE.geo.map(([y, x]) => new kakao.maps.LatLng(y, x));
+  KK.lines.push(new kakao.maps.Polyline({ path, strokeWeight: 9, strokeColor: tok("paper"), strokeOpacity: 0.9 }));
+  KK.lines.push(new kakao.maps.Polyline({ path, strokeWeight: 5, strokeColor: tok("me"), strokeOpacity: 0.95, strokeStyle: ROUTE.real ? "solid" : "shortdash" }));
+  KK.lines.forEach(l => l.setMap(KK.map));
+}
+async function kakaoOn() {
+  if (!KAKAO_OK) { toast("PC에 저장한 파일로 열면 카카오맵을 쓸 수 없어요. 사이트 주소로 열어 주세요"); setBase("osm", true); return false; }
+  const key = kakaoKey(); if (!key) { kakaoKeySheet(); setBase("osm", true); return false; }
+  try { await loadKakao(key); } catch (e) { toast("카카오맵을 불러오지 못했습니다. 키와 사이트 도메인 등록을 확인하세요"); setBase("osm", true); return false; }
+  const el = $("#kmap"); el.hidden = false; BOX.classList.add("kakao");
+  if (!KK.map) {
+    const c = map.getCenter();
+    KK.map = new kakao.maps.Map(el, { center: new kakao.maps.LatLng(c.lat, c.lng), level: kLvl(map.getZoom()) });
+    KK.map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.LEFT);
+    KK.map.setMinLevel && KK.map.setMinLevel(1);
+    kakao.maps.event.addListener(KK.map, "idle", () => {
+      if (KK.sync) return; const c2 = KK.map.getCenter(), z = kZ(KK.map.getLevel());
+      KK.sync = true; map.setView([c2.getLat(), c2.getLng()], Math.max(6, z), { animate: false }); setTimeout(() => { KK.sync = false; }, 60);
+      const k = $("#kmap"); k.classList.toggle("showlb", z >= 9); k.classList.toggle("showall", z >= 12);
+    });
+    kakao.maps.event.addListener(KK.map, "zoom_changed", () => { if (!KK.sync) { const z = kZ(KK.map.getLevel()); if (Math.max(6, z) !== map.getZoom()) { KK.sync = true; map.setZoom(Math.max(6, z), { animate: false }); setTimeout(() => { KK.sync = false; }, 60); } } });
+    kakao.maps.event.addListener(KK.map, "dragstart", () => map.fire("dragstart"));
+    kakao.maps.event.addListener(KK.map, "click", e => { if (picking && pickH) pickH({ latlng: { lat: e.latLng.getLat(), lng: e.latLng.getLng() } }); });
+    map.on("moveend zoomend", kkView);
+    try { new ResizeObserver(() => KK.map && KK.map.relayout()).observe(el); } catch (e) {}
+  } else KK.map.relayout();
+  KK.on = true; KK.sync = false; if (map.hasLayer(tiles)) map.removeLayer(tiles); kkView(); kkMarkers(); kkMe(); kkRoute();
+  return true;
+}
+function kakaoOff() { const was = KK.on; KK.on = false; $("#kmap").hidden = true; BOX.classList.remove("kakao"); if (!map.hasLayer(tiles)) tiles.addTo(map); map.invalidateSize(); if (was) layoutMarkers(); }
+function setBase(b, quiet) {
+  document.querySelectorAll("#basemap button").forEach(x => x.setAttribute("aria-pressed", x.dataset.b === b));
+  if (!quiet) store.set("pfg.base", b);
+  if (b === "kakao") return kakaoOn(); kakaoOff(); return true;
+}
+function kakaoKeySheet() {
+  sheet(`<div class="sheet-b"><div class="eb">카카오맵 연결</div><h3 id="popT">카카오맵 JavaScript 키를 넣어 주세요</h3>
+    <ol class="steps"><li><a href="https://developers.kakao.com/console/app" target="_blank" rel="noopener">카카오 디벨로퍼스</a>에 카카오 계정으로 로그인 → <b>애플리케이션 추가</b>(이름: 팔도 축제길)</li>
+    <li><b>앱 설정 → 앱 키</b>에서 <b>JavaScript 키</b>를 복사</li>
+    <li><b>앱 설정 → 플랫폼 → Web → 사이트 도메인</b>에 <code>https://sadness500-boop.github.io</code> 등록 (휴대폰 앱은 <code>https://localhost</code>도 함께)</li>
+    <li><b>제품 설정 → 카카오맵</b>을 <b>사용함(ON)</b>으로 켜기</li></ol>
+    <form id="kkF" class="addrf"><input id="kkKey" type="text" placeholder="JavaScript 키 (32자리)" autocomplete="off" aria-label="카카오 JavaScript 키" value="${esc(store.get("pfg.kakaokey", ""))}"><button class="btn primary" type="submit">저장하고 켜기</button></form>
+    <p class="hint2">키는 이 브라우저에만 저장됩니다. 모든 방문자에게 카카오맵을 보여 주려면 키를 앱 코드에 넣어야 합니다.</p></div>`, "qrs");
+  $("#kkF").onsubmit = e => { e.preventDefault(); const k = $("#kkKey").value.trim(); if (!/^[0-9a-f]{32}$/i.test(k)) { toast("JavaScript 키는 영문·숫자 32자리입니다"); return; } store.set("pfg.kakaokey", k); closeDetail(true); setBase("kakao"); };
+}
+$("#basemap").onclick = e => { const b = e.target.closest("button"); if (b) setBase(b.dataset.b); };
 
 // ── 시작 ──
 render.day = today0().getTime();
 paintAdmin(); render();
+{ const b0 = store.get("pfg.base", "") || (kakaoKey() && KAKAO_OK ? "kakao" : "osm"); setBase(b0, true); }
 const saved = store.get("pfg.myloc", null);
 if (saved && isFinite(saved.lat)) { LOC.centered = true; showLoc(saved.lat, saved.lng, saved.acc, "saved", false); }
 locate("auto");
