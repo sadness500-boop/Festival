@@ -4003,7 +4003,7 @@ function addrSheet() {
 // ── 카카오맵 연동 ──
 // 카카오 디벨로퍼스(developers.kakao.com)에서 받은 JavaScript 키를 넣으면 기본 지도가 카카오맵이 됩니다.
 // 키의 [플랫폼 → Web 사이트 도메인]에 https://sadness500-boop.github.io (앱은 https://localhost) 를 등록해야 지도가 열립니다.
-const KAKAO_JS_KEY = "";
+const KAKAO_JS_KEY = "8453c0a68310133484b3b92ed0f0a1f7";
 const KAKAO_OK = location.protocol === "https:" || IS_APP || location.hostname === "localhost"; // PC 파일(file://)·claude.ai 미리보기에서는 카카오 정책상 열리지 않음
 const KK = { on: false, map: null, ov: new Map(), me: null, meC: null, lines: [], sync: false, loading: null };
 const kakaoKey = () => store.get("pfg.kakaokey", "") || KAKAO_JS_KEY;
